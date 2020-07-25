@@ -1,5 +1,6 @@
 #ifndef GUARD_DETOUR_H
 #define GUARD_DETOUR_H
+#include <function>
 #ifdef USE_MINHOOK
 #include "MinHook.h"
 #define GuardDetourStatus MH_STATUS
@@ -21,14 +22,16 @@ public:
 	GuardDetour(typeOriginal original, typeHook hook)
 		: GuardDetourHandle<Fn>()
 	{
+#ifdef USE_MINHOOK
+#ifndef GUARD_DETOUR_NO_INITIALIZE_MINHOOK
 		static bool isMHInitilizated = false;
 		if (!isMHInitilizated)
 		{
-#ifdef USE_MINHOOK
 			MH_Initialize();
-#endif
 			isMHInitilizated = true;
 		}
+#endif
+#endif
 #ifdef USE_MINHOOK
 		GuardDetourStatus status = MH_CreateHook(reinterpret_cast<LPVOID>(original), reinterpret_cast<LPVOID>(hook), reinterpret_cast<LPVOID*>(&this->originalFunction));
 #else
